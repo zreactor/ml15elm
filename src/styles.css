@@ -1,0 +1,39 @@
+.hereclass {
+    color: red;
+}
+
+.presentersDisplay {
+    color: whitesmoke;
+    font-size: x-large;
+    text-align: center;
+    margin-top: 10px;
+    padding: 3px;
+}
+
+.centred-div {
+    background-color: rgb(36, 38, 39);
+}
+
+.addPresenterTitle {
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: large;
+}
+
+#addPresenter {
+    padding-top: 30px;
+    text-align: center;
+}
+
+#clockTimeDisplay {
+    color: #cccccc;
+    text-align: center;
+    font-size: 52px;
+}
+
+#titleElement {
+    text-align: center;
+    font-size: x-large;
+    padding: 15px;
+    color: #666666;
+}
