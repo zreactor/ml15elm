@@ -1,9 +1,9 @@
 ### Intro
-A simple web app in Elm for managing presenter schedule on ML15.
+A simple frontend-only single-page web app in Elm for managing presenter schedule on ML15.
 
 Uses elm version 0.19.0.
 
-Use as a sample implementation of ports, subscriptions etc. in elm.
+Use as a sample of how to use ports, subscriptions etc. in elm.
 
 Elm entrypoint is App.elm. App component is embedded in app.html, so the webpage can be viewed by navigating to app.html after starting up elm reactor.
 
