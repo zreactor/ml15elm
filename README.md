@@ -10,7 +10,7 @@ Elm entrypoint is App.elm. App component is embedded in app.html, so the webpage
 Add presenters by the + icon, start clock, remove when finished with - next to each presenter. Warning chime sounds at 14 minutes, Finish gong sounds at 15.
 
 
-![](./app_top.png)
+![](./src/app_top.png)
 
 
 #### Build
