@@ -9,10 +9,12 @@ import String
 import String.Format
 import Html.Attributes as Ats
 import Html.Events exposing (onClick, onInput)
+import Http
 import Debug exposing (log)
 import Browser.Events exposing (onAnimationFrameDelta)
 import Time
-import Json.Decode as Decode exposing (Value)
+import Json.Decode as D exposing (Value)
+import Json.Encode as Encode
 import Animation exposing (..)
 import Url exposing (Url)
 import Array
@@ -30,6 +32,12 @@ basehtml model =
         Html.span [Ats.style "padding" "10px", Ats.style "display" "inline-block"][
             Html.button [Ats.class (if model.clock_interval == 0 then "btn btn-light" else "btn btn-dark"), onClick (TriggerClock)][Html.span [][Html.text (if model.clock_interval == 0 then "Start Clock" else "Stop Clock")]]
             ],
+        Html.span [onClick (GetJson "my request from Elm")][
+            Html.button [][Html.span [][Html.text "Go"]]
+        ],
+        Html.span [][
+            Html.text (String.concat model.be_presenters)
+        ],
         Html.span [Ats.style "padding" "10px", Ats.style "display" "inline-block"][
             Html.button [Ats.class "btn btn-dark", onClick (ResetTicks)][Html.span [][Html.text "Clear"]]]
     ],
@@ -58,7 +66,7 @@ basehtml model =
 
 -- init function 
 initFxn: Value -> Url -> Nav.Key -> ( Model, Cmd Actions )
-initFxn flags url navKey = ({ clock = 0, nr_presenters = 0, presenters = [], current_presenter = "", clock_interval = 0, time_passed = 0}, Cmd.none)
+initFxn flags url navKey = ({ clock = 0, nr_presenters = 0, presenters = [], current_presenter = "", clock_interval = 0, time_passed = 0, be_presenters = []}, Cmd.none)
 
 -- model definition
 type alias Model = {
@@ -67,19 +75,22 @@ type alias Model = {
     current_presenter: String,
     clock: Clock,
     time_passed: Int,
-    clock_interval: Int
+    clock_interval: Int,
+    be_presenters: List String
     }
 
 
 -- view function
 viewFxn: Model -> Browser.Document Actions
-viewFxn model = {title = "C", body = [Html.div [] (
+viewFxn model = {
+    title = "C", 
+    body = [Html.div [] (
     List.append (basehtml model) 
         (texttodivs model.presenters))]}
 
 
 -- model update function
-updateFxn: Actions -> Model -> (Model, Cmd msg)
+updateFxn: Actions -> Model -> (Model, Cmd Actions)
 updateFxn msg model =
     case msg of
         AddPresenter ->
@@ -120,6 +131,39 @@ updateFxn msg model =
             ({ model | clock_interval = (flipClockAction model.clock_interval)}, playSound ("flipping clock action"))
         ChangedUrl _ -> ({model | clock=model.clock}, Cmd.none)
         ClickedLink _ -> ({model | clock=model.clock}, Cmd.none)
+        GetJson requrl -> (model, (getPresenters requrl))
+        GotJson result -> 
+            case result of
+                Ok presrs ->
+                    ( { model | be_presenters = presrs}, Cmd.none )
+                
+                Err _ ->
+                    ( model, Cmd.none)
+
+
+
+jsonBody : Encode.Value -> Http.Body
+jsonBody value =
+  Http.stringBody "application/json" (Encode.encode 0 value)
+
+
+getPresenters: String -> Cmd Actions
+getPresenters url_path = 
+    Http.request
+        {
+            method = "POST",
+            url = "http://localhost:8001/cats",
+            headers = [
+              Http.header "Access-Control-Allow-Origin" "*",
+              Http.header "Access-Control-Allow-Headers" "Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token",
+              Http.header "Access-Control-Allow-Methods" "PUT, GET, POST, DELETE, OPTIONS",
+              Http.header "Content-Type" "application/json"                
+            ],
+            body = (Http.stringBody "application/json" url_path),
+            expect = Http.expectJson GotJson (D.list (D.field "presenter" D.string)),
+            timeout = Nothing,
+            tracker = Nothing
+        }
 
 -- subscriptions
 subscriptions: Model -> Sub Actions

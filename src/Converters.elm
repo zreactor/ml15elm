@@ -7,8 +7,9 @@ import String
 import String.Format
 import Url exposing (Url)
 import Browser
+import Http
 
-type Actions = UpdateName String | AddPresenter | SetPresenter String | RemovePresenter String | Tick Float | ResetTicks | TriggerClock | ChangedUrl Url | ClickedLink Browser.UrlRequest 
+type Actions = UpdateName String | AddPresenter | SetPresenter String | RemovePresenter String | Tick Float | ResetTicks | TriggerClock | ChangedUrl Url | ClickedLink Browser.UrlRequest | GotJson (Result Http.Error (List String)) | GetJson String
 
 -- a maybe monad
 getItem: Maybe String -> String
