@@ -1,0 +1,11 @@
+# Various local components not used in build
+ghb*
+src/Main.elm
+_ignore*
+ignore.elm
+*.m4a
+
+# Build outputs, local config
+app.js
+*.DS_Store
+elm-stuff
