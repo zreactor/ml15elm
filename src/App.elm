@@ -19,6 +19,7 @@ import Array
 
 port playSound : String -> Cmd msg
 
+-- view base HTML
 basehtml: Model -> List (Html Actions)
 basehtml model =
     [Html.div [Ats.id "titleElement"] [Html.text "ML15 非公式 ELM app"],        
@@ -54,12 +55,30 @@ basehtml model =
         ]     
     ]
 
+
+-- init function 
+initFxn: Value -> Url -> Nav.Key -> ( Model, Cmd Actions )
+initFxn flags url navKey = ({ clock = 0, nr_presenters = 0, presenters = [], current_presenter = "", clock_interval = 0, time_passed = 0}, Cmd.none)
+
+-- model definition
+type alias Model = {
+    nr_presenters: Int,
+    presenters: List String,
+    current_presenter: String,
+    clock: Clock,
+    time_passed: Int,
+    clock_interval: Int
+    }
+
+
+-- view function
 viewFxn: Model -> Browser.Document Actions
 viewFxn model = {title = "C", body = [Html.div [] (
     List.append (basehtml model) 
         (texttodivs model.presenters))]}
 
 
+-- model update function
 updateFxn: Actions -> Model -> (Model, Cmd msg)
 updateFxn msg model =
     case msg of
@@ -86,8 +105,10 @@ updateFxn msg model =
             }, (
                 if model.time_passed == warning_time then 
                 playSound("WARNING_TIME") 
+                
                 else if model.time_passed == end_time then
                 playSound("END_TIME")
+                
                 else Cmd.none)
             )
         ResetTicks ->
@@ -100,24 +121,12 @@ updateFxn msg model =
         ChangedUrl _ -> ({model | clock=model.clock}, Cmd.none)
         ClickedLink _ -> ({model | clock=model.clock}, Cmd.none)
 
-
+-- subscriptions
 subscriptions: Model -> Sub Actions
 subscriptions _ = 
     Sub.batch [ onAnimationFrameDelta Tick ]
 
-type alias Model = {
-    mytext: String,
-    nr_presenters: Int,
-    presenters: List String,
-    current_presenter: String,
-    clock: Clock,
-    time_passed: Int,
-    clock_interval: Int
-    }
-
-initFxn: Value -> Url -> Nav.Key -> ( Model, Cmd Actions )
-initFxn flags url navKey = ({ clock = 0, mytext = "", nr_presenters = 0, presenters = [], current_presenter = "", clock_interval = 0, time_passed = 0}, Cmd.none)
-
+-- program main exposed method
 main: Program Value Model Actions
 main = Browser.application {
     init = initFxn,
