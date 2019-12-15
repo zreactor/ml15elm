@@ -4,26 +4,18 @@
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="./styles.css" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /> -->
-    
   </head>
 
   <body>
-        title placeholder
+        [title placeholder - is replaced via Elm]
     <div id="elm-code-holder"></div>
-
     <script src="app.js"></script>
     <script src="sounds.js"></script>
     <script>
         var app = Elm.App.init(
         {node: document.getElementById("elm-code-holder")
         });
-        // app.ports && app.ports.sounds && app.ports.sounds.subscribe(SoundManager);
-        console.log("sound manager..", SoundManager);
-        console.log("App...", app);
-        app.ports.playSound.subscribe(SoundManager);
-
+        app.ports && app.ports.playSound && app.ports.playSound.subscribe(SoundManager);
     </script> 
   </body>
 </html>
