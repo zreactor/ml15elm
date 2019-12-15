@@ -1,8 +1,6 @@
 function SoundManager(msg) {
-    warn_sound = new Audio('./catmeow.m4a');
-    end_sound = new Audio('./pingping.m4a');
-    audiofile = new Audio('./testmemo.m4a');
-    
+    warn_sound = new Audio('./pingping.m4a');
+    end_sound = new Audio('./gong.m4a');
 
     if (msg == "WARNING_TIME") {
         warn_sound.play();
@@ -12,14 +10,7 @@ function SoundManager(msg) {
         end_sound.play();
         console.log("End time *****", msg);
 
-    } else {
-        
-        console.log("Start clock:", msg);
-        // audiofile.play();
-        // warn_sound.play();
-        // end_sound.play();
-    }
-    
-      
-      
+    } else { 
+        console.log("SoundManager got a message:", msg);
+    }  
   };
