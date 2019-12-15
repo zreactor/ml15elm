@@ -5,9 +5,11 @@ second = 1000
 ms: Float
 ms = 1
 
+-- minutes after which to sound the warning chime (14 for ML15)
 warning_time_min: Int
-warning_time_min = 1
+warning_time_min = 14
 
+-- minutes after which to sound the end chime (15)
 end_time_min: Int
 end_time_min = warning_time_min + 1
 
