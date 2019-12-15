@@ -51,7 +51,7 @@ basehtml model =
             ][
                 Html.span [] [Html.text "+"] 
             ],
-        Html.div [Ats.class "presentersDisplay", Ats.style "background-color" "salmon"][Html.text (String.append (String.fromInt model.nr_presenters) " presenters")]       
+        Html.div [Ats.class "presentersDisplay", Ats.style "background-color" "salmon"][Html.text (String.append (String.fromInt model.nr_presenters) " presenters to go")]       
         ]     
     ]
 
