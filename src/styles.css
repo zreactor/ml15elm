@@ -8,6 +8,7 @@
     text-align: center;
     margin-top: 10px;
     padding: 3px;
+    background-color: #7278fa;
 }
 
 .centred-div {
@@ -31,9 +32,20 @@
     font-size: 52px;
 }
 
+#geturl {
+    text-align: center;
+    padding-top: 40px;
+    padding-bottom: 30px;
+    background-color: #229;
+}
+
 #titleElement {
     text-align: center;
     font-size: x-large;
     padding: 15px;
     color: #666666;
+}
+
+body {
+    background-color: #f4f4ff;
 }

@@ -32,14 +32,23 @@ basehtml model =
         Html.span [Ats.style "padding" "10px", Ats.style "display" "inline-block"][
             Html.button [Ats.class (if model.clock_interval == 0 then "btn btn-light" else "btn btn-dark"), onClick (TriggerClock)][Html.span [][Html.text (if model.clock_interval == 0 then "Start Clock" else "Stop Clock")]]
             ],
-        Html.span [onClick (GetJson "my request from Elm")][
-            Html.button [][Html.span [][Html.text "Go"]]
-        ],
-        Html.span [][
-            Html.text (String.concat model.be_presenters)
-        ],
         Html.span [Ats.style "padding" "10px", Ats.style "display" "inline-block"][
             Html.button [Ats.class "btn btn-dark", onClick (ResetTicks)][Html.span [][Html.text "Clear"]]]
+    ],
+    Html.div[Ats.id "geturl"][
+        Html.input[
+            Ats.placeholder "ML15 page URL", 
+            Ats.style "margin-right" "15px", 
+            Ats.style "padding" "7px",
+            Ats.size 70,
+            onInput UpdateUrlName
+            ][],
+        Html.button [
+            Ats.class "btn btn-light", 
+            onClick (GetJson)
+            ][
+                Html.span [] [Html.text "+"] 
+            ]
     ],
     Html.div [Ats.id "addPresenter"][
         Html.span [
@@ -59,24 +68,31 @@ basehtml model =
             ][
                 Html.span [] [Html.text "+"] 
             ],
-        Html.div [Ats.class "presentersDisplay", Ats.style "background-color" "salmon"][Html.text (String.append (String.fromInt model.nr_presenters) " presenters to go")]       
+        Html.button [
+            Ats.class "btn btn-dark",
+            Ats.style "margin-left" "5px",
+            onClick (ClearPresenters)
+            ][
+                Html.span [] [Html.text "clear all"]
+            ],
+        Html.div [Ats.class "presentersDisplay"][Html.text (String.append (String.fromInt model.nr_presenters) " presenters to go")]       
         ]     
     ]
 
 
 -- init function 
 initFxn: Value -> Url -> Nav.Key -> ( Model, Cmd Actions )
-initFxn flags url navKey = ({ clock = 0, nr_presenters = 0, presenters = [], current_presenter = "", clock_interval = 0, time_passed = 0, be_presenters = []}, Cmd.none)
+initFxn flags url navKey = ({ clock = 0, nr_presenters = 0, presenters = [], current_presenter = "", url_string = "", clock_interval = 0, time_passed = 0}, Cmd.none)
 
 -- model definition
 type alias Model = {
     nr_presenters: Int,
     presenters: List String,
     current_presenter: String,
+    url_string: String,
     clock: Clock,
     time_passed: Int,
-    clock_interval: Int,
-    be_presenters: List String
+    clock_interval: Int
     }
 
 
@@ -86,7 +102,11 @@ viewFxn model = {
     title = "C", 
     body = [Html.div [] (
     List.append (basehtml model) 
-        (texttodivs model.presenters))]}
+        (texttodivs model.presenters))
+    --         Html.div [] (
+    -- List.append ([]) 
+    --     (texttodivs model.be_presenters))
+        ]}
 
 
 -- model update function
@@ -101,6 +121,8 @@ updateFxn msg model =
             }, Cmd.none)
         UpdateName newvalue ->
             ({ model | current_presenter = newvalue}, Cmd.none)
+        UpdateUrlName newvalue ->
+            ({ model | url_string = newvalue}, Cmd.none)
         SetPresenter newvalue ->
             ({ model | presenters = (newvalue :: model.presenters)}, Cmd.none)
         RemovePresenter presentername ->
@@ -131,11 +153,18 @@ updateFxn msg model =
             ({ model | clock_interval = (flipClockAction model.clock_interval)}, playSound ("flipping clock action"))
         ChangedUrl _ -> ({model | clock=model.clock}, Cmd.none)
         ClickedLink _ -> ({model | clock=model.clock}, Cmd.none)
-        GetJson requrl -> (model, (getPresenters requrl))
+        ClearPresenters -> ({model | 
+            presenters = [],
+            nr_presenters = 0
+            }, Cmd.none )
+        GetJson -> (model, (getPresenters model.url_string))
         GotJson result -> 
             case result of
                 Ok presrs ->
-                    ( { model | be_presenters = presrs}, Cmd.none )
+                    ( { model | 
+                    presenters = presrs ++ model.presenters,
+                    nr_presenters = (List.length (presrs ++ model.presenters))
+                    }, Cmd.none )
                 
                 Err _ ->
                     ( model, Cmd.none)
@@ -152,7 +181,7 @@ getPresenters url_path =
     Http.request
         {
             method = "POST",
-            url = "http://localhost:8001/cats",
+            url = "http://localhost:8001/getpresenters",
             headers = [
               Http.header "Access-Control-Allow-Origin" "*",
               Http.header "Access-Control-Allow-Headers" "Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token",

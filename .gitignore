@@ -9,3 +9,7 @@ ignore.elm
 app.js
 *.DS_Store
 elm-stuff
+*__pycache__*
+
+# Test用ipynb notebooks
+*.ipynb
