@@ -103,9 +103,6 @@ viewFxn model = {
     body = [Html.div [] (
     List.append (basehtml model) 
         (texttodivs model.presenters))
-    --         Html.div [] (
-    -- List.append ([]) 
-    --     (texttodivs model.be_presenters))
         ]}
 
 

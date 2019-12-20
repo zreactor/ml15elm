@@ -37,7 +37,7 @@ class ApiServer():
 
         @app.route('/<path:path>')
         def _static_serve(path):
-            LOGGER.info("Static serving....." + path)
+            LOGGER.info(f"Static serving..... {path}")
             return app.send_static_file(path)
 
         @app.route('/')
@@ -47,17 +47,11 @@ class ApiServer():
         @app.route('/getpresenters', methods=["POST"])
         @cross_origin(origins='*')
         def _getpresenters():
-            # mlurl = "https://machine-learning15minutes.connpass.com/event/105034/"
-
-            print("data", request.data)
             ml_url = request.data
             presenter_list = get_presenters_from_url(ml_url)
+            LOGGER.info(f"Processed presenters...{presenter_list}")
             presenters_json = [{"presenter": x} for x in presenter_list]
-            print(presenters_json)
             return json.dumps(presenters_json)
-            
-            # return json.dumps([{"presenter": "aa"}, {"presenter": "bb"}])
-
         return app
 
     def launch_server(self):
